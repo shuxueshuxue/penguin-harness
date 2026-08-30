@@ -153,6 +153,7 @@ import type {
   AgentPackageResponse,
   AgentPackagePublishResponse,
   AgentPackagePreviewResponse,
+  AgentPackageSourceKind,
   VersionRollbackResponse,
   VersionResponse,
   WorkspaceFilesResponse,
@@ -1315,15 +1316,24 @@ export const publishAgentPackage = (
     `/api/projects/${encodeURIComponent(projectId)}/agents/${encodeURIComponent(agentId)}/package/publish`,
     { method: "POST", body },
   );
-/** Reads and validates a gist as a package; writes nothing. */
-export const previewAgentPackage = (gist: string) =>
+/**
+ * Reads and validates a source as a package; writes nothing. A source is a gist link or id,
+ * `npm:<name>[@version]`, a GitHub repository or release URL, `github:o/r[#ref]`, a git URL,
+ * or an http(s) URL of a tarball; `kind` forces one reading.
+ */
+export const previewAgentPackage = (source: string, kind?: AgentPackageSourceKind) =>
   apiFetch<AgentPackagePreviewResponse>("/api/agent-packages/preview", {
     method: "POST",
-    body: { gist },
+    body: { source, ...(kind === undefined ? {} : { kind }) },
   });
-/** Owner only: installs the gist as a new Agent of the Project. */
-export const installAgentPackage = (body: { gist: string; projectId: string; agentId: string }) =>
-  apiFetch<{ agentId: string }>("/api/agent-packages/install", { method: "POST", body });
+/** Owner only: installs the source as a new Agent of the Project. */
+export const installAgentPackage = (body: {
+  source: string;
+  kind?: AgentPackageSourceKind;
+  projectId: string;
+  agentId: string;
+}) => apiFetch<{ agentId: string }>("/api/agent-packages/install", { method: "POST", body });
+
 // ---- The plugins a Project asks for ----
 /**
  * A Project's plugin list. Project-scoped because machines are lent to Projects, so this is
