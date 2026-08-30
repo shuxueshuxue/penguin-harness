@@ -25,6 +25,8 @@ export const HMR_ROUTE_PREFIX = "/api/hmr";
 export const HMR_UPGRADE_PATH = `${HMR_ROUTE_PREFIX}/upgrade`;
 /** Names the blobs a pusher holds; answers which of them this store lacks, so the push carries only those. */
 export const HMR_PROBE_PATH = `${HMR_ROUTE_PREFIX}/assets/probe`;
+/** A pushed interface table larger than this is not recorded (the push itself is unaffected). */
+const IFACES_TABLE_CAP = 8 * 1024 * 1024;
 
 /** What the product does with a generation once it is current. */
 export type Replace<Api extends Park> = (instance: Instance<Api>) => void;
@@ -147,6 +149,7 @@ export function parseUpgradeTarget(contentType: string | null, body: Buffer): Up
       exec?: string[];
     };
     source?: { repo: string; revision: string };
+    ifaces?: string;
   };
   try {
     payload = JSON.parse(zlib.gunzipSync(body).toString("utf8"));
@@ -182,6 +185,9 @@ export function parseUpgradeTarget(contentType: string | null, body: Buffer): Up
     // so it is accepted only fully formed. A half-filled or wrong-typed `source` is dropped
     // rather than committed: readers tolerate its absence, and a malformed record on disk
     // would outlive the push that produced it.
+    ...(typeof payload.ifaces === "string" && payload.ifaces.length <= IFACES_TABLE_CAP
+      ? { ifaces: payload.ifaces }
+      : {}),
     ...(typeof payload.source?.repo === "string" &&
     typeof payload.source.revision === "string" &&
     payload.source.repo.length > 0 &&
