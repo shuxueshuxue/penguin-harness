@@ -53,7 +53,7 @@ const MIN_ROWS = 6;
  */
 export function PromptFold({ text }: { text: string }) {
   return (
-    <HelpFold title={S.aiCreate.fullPrompt}>
+    <HelpFold title={S.aiCreate.fullPrompt} flush>
       <div className="relative">
         <pre className="max-h-48 overflow-auto rounded-md border border-gray-200 bg-gray-50 p-2 pr-8 font-sans text-xs leading-relaxed whitespace-pre-wrap text-gray-700 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300">
           {text}
@@ -134,6 +134,7 @@ export function AiCreatePanel({
       <Textarea
         ref={textareaRef}
         rows={MIN_ROWS}
+        size="sm"
         value={value}
         placeholder={placeholder ?? S.aiCreate.placeholder}
         aria-label={S.aiCreate.promptLabel}
