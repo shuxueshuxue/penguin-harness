@@ -108,6 +108,7 @@ import { HmrRoutes } from "./hmr/routes.js";
 import { EventsRoutes } from "./http/routes/events.js";
 import { PluginRegistryRoutes, PluginRoutes } from "./http/routes/plugins.js";
 import { InstalledPluginRoutes } from "./http/routes/plugins-installed.js";
+import { AdminSandboxRoutes } from "./http/routes/admin-sandbox.js";
 import { TerminalModule } from "./terminal/manager.js";
 import { SessionApiRoutes } from "./http/routes/sessions.js";
 import { Admin, Auth, AuthSessions, Users } from "./mechanisms/identity.js";
@@ -366,6 +367,7 @@ export class MessagingHubModule {}
     PluginRoutes,
     PluginRegistryRoutes,
     InstalledPluginRoutes,
+    AdminSandboxRoutes,
   ],
   exports: [Http, WebShell, UpdateCheck],
 })
